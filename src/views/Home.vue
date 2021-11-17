@@ -4,11 +4,19 @@
       <GoodsList :products="products" :loading="loading" />
     </div>
     <FooterBar
+            :categories="categories"
             :currentCategory="currentCategory"
+            :showCartBtn="true"
             @categoryChange="loadProducts"
             @toggleCart="showCart = !showCart"
     />
-
+    <div class="search">
+      <el-input
+              prefix-icon="el-icon-search"
+              v-model="keywords"
+              @input="input($event)" placeholder="请输入关键字搜索" clearable></el-input>
+    </div>
+    <div style="height: 60px;"></div>
     <ShoppingCart v-show="showCart" />
   </div>
 </template>
@@ -20,11 +28,13 @@ import GoodsList from '../components/GoodsList.vue'
 import ShoppingCart from '../components/ShoppingCart.vue'
 import { mapState } from 'vuex'
 
-
+import {Input} from 'element-ui';
+let inputTimeout = null;
 export default {
   name: 'home',
   components: {
       FooterBar, GoodsList, ShoppingCart,
+      [Input.name]: Input,
   },
   created() {
     this.$store.dispatch('products/load').then(() => {
@@ -44,13 +54,22 @@ export default {
           showCart: false,
           currentCategory: null,
           products: [],
+          keywords: '',
       }
   },
   methods: {
       loadProducts(cid) {
           this.currentCategory = cid;
-          this.products = this.$store.getters['products/getProductsByCid'](cid);
+          this.products = this.$store.getters['products/query'](cid, this.keywords);
       },
+      input(value) {
+          if(inputTimeout)
+              clearTimeout(inputTimeout);
+
+          inputTimeout = setTimeout(() => {
+              this.products = this.$store.getters['products/query'](this.currentCategory, this.keywords);
+          }, 300);
+      }
 //      categoryChange(cid) {
 //          this.currentCategory = cid;
 //          this.loadProducts(cid);
@@ -58,3 +77,12 @@ export default {
   },
 }
 </script>
+
+<style scoped lang="less">
+.search {
+  width: 400px;
+  position: fixed;
+  left: 15px;
+  bottom: 70px;
+}
+</style>

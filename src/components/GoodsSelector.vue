@@ -13,7 +13,7 @@
                     v-for="item in sku.color"
                     :key="item"
                     size="small"
-                    @click="selectedSku.color = item"
+                    @click="skuChange('color', item)"
                     :type="selectedSku.color == item ? '' : 'info'"
                     :effect="selectedSku.color == item ? 'light' : 'plain'">
               {{item}}
@@ -28,14 +28,14 @@
                     v-for="item in sku.size"
                     :key="item"
                     size="small"
-                    @click="selectedSku.size = item"
+                    @click="skuChange('size', item)"
                     :type="selectedSku.size == item ? '' : 'info'"
                     :effect="selectedSku.size == item ? 'light' : 'plain'">
               {{item}}
             </el-tag>
           </div>
         </div>
-        <!--<h4>数量</h4>-->
+        <h4>库存：{{stock}}</h4>
         <!--<div class="clear">-->
           <!---->
         <!--</div>-->
@@ -43,7 +43,7 @@
       <span slot="footer" class="dialog-footer">
         <el-input-number v-model="qty" :min="1" size="mini"></el-input-number>
         <!--<el-button @click="dialogVisible = false">取 消</el-button>-->
-        <el-button type="primary" @click="addToCart">确 定</el-button>
+        <el-button type="primary" size="mini" @click="addToCart">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -66,6 +66,7 @@ export default {
   },
   data() {
     return {
+        stock: 0,
         qty: 1,
         dialogVisible: true,
         sku: {color:[],size:[],colorName:'',sizeName:''},
@@ -79,8 +80,10 @@ export default {
   methods: {
       initSku() {
         const {product} = this;
-        if(!product.sku)
+        if(!product.sku) {
+            this.stock = product.stock;
             return;
+        }
 
         console.log(product.sku);
         let sku = {color:[],size:[],colorName:'',sizeName:''};
@@ -94,6 +97,12 @@ export default {
         }
         console.log(sku);
         this.sku = sku;
+        this.stock = product.sku.sku_map[[this.selectedSku.color,this.selectedSku.size].join()].stock;
+      },
+      skuChange(type, value) {
+          this.selectedSku[type] = value;
+          const {product} = this;
+          this.stock = product.sku.sku_map[[this.selectedSku.color,this.selectedSku.size].join()].stock;
       },
       addToCart() {
           let sku = '';
@@ -102,6 +111,11 @@ export default {
               if(this.selectedSku.size)
                   sku += ','+this.selectedSku.size;
           }
+          if(this.qty > this.stock) {
+              this.$toast.error('库存不足');
+              return;
+          }
+
           const cartItem = {
               id: this.product.id,
               qty: this.qty,
@@ -111,8 +125,12 @@ export default {
           };
 
           this.$store.commit('cart/add', cartItem);
-          this.dialogVisible = true;
-          this.closed();
+          this.$toast.success('添加成功');
+          if(!sku) {
+              this.dialogVisible = true;
+              this.closed();
+          }
+
       },
       closed() {
           this.$emit('closed');
@@ -134,6 +152,7 @@ export default {
   .el-tag {
     cursor: pointer;
     margin-right: 10px;
+    margin-bottom: 10px;
   }
   h4 {
     margin: 0;

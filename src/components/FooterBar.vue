@@ -5,16 +5,17 @@
       <div class="categories">
         <div class="categories-list">
           <div
-              class="item"
-              :class="{on:currentCategory == item.id}"
-              v-for="item in categories"
-              :key="item.id"
-              @click="categoryChange(item.id)"
-              v-text="item.name">
+                  class="item"
+                  :class="{on:currentCategory == item.id}"
+                  v-for="item in categories"
+                  :key="item.id"
+                  @click="categoryChange(item.id)"
+                  v-text="item.name">
           </div>
         </div>
+        <router-link to="/address" class="link">地址管理</router-link>
       </div>
-      <div class="btn" @click="$emit('toggleCart')">查看购物车({{count}})</div>
+      <div v-if="showCartBtn" class="btn" @click="$emit('toggleCart')">查看购物车({{count}})</div>
     </div>
   </div>
 </template>
@@ -23,12 +24,9 @@
 import { mapState,mapGetters } from 'vuex'
 export default {
   name: 'FooterBar',
-  props: ['currentCategory'],
+  props: ['currentCategory', 'categories', 'showCartBtn'],
   components: {},
   computed: {
-      ...mapState({
-          categories: state => state.products.categories,
-      }),
       ...mapGetters({
           count: 'cart/count',
       }),
@@ -64,9 +62,18 @@ export default {
     flex: 1;
     box-sizing: border-box;
     border-top: 1px solid rgba(0,0,0,0.1);
-    padding-left: 20px;
+    padding: 0 20px;
     height: 60px;
-    line-height: 60px;
+    /*line-height: 60px;*/
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .link {
+      color: #999;
+      font-size: 12px;
+      text-decoration: none;
+    }
 
     .categories-list {
       .item {

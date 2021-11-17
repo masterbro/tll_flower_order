@@ -8,7 +8,7 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="地址">
-        <el-select v-model="form.address" placeholder="请选择配送地址" style="width: 400px">
+        <el-select v-model="form.address" filterable placeholder="请选择配送地址" style="width: 400px">
           <el-option
                   v-for="item in addresses"
                   :label="`${item.real_name}/${item.tel}/${item.company}`"
@@ -78,18 +78,15 @@ export default {
   methods: {
       async onSubmit() {
           let address = {};
-          if(this.form.shipping_method == 'delivery') {
-              if (!this.form.address) {
-                  this.$toast.error('请选择收货地址');
-                  return;
-              }
-              address = this.addresses.find((item) => item.id == this.form.address);
-              if (!address) {
-                  this.$toast.error('请选择收货地址');
-                  return;
-              }
+          if (!this.form.address) {
+              this.$toast.error('请选择收货地址');
+              return;
           }
-
+          address = this.addresses.find((item) => item.id == this.form.address);
+          if (!address) {
+              this.$toast.error('请选择收货地址');
+              return;
+          }
 
           const loading = this.$loading({
               lock: true,

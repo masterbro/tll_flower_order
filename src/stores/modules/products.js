@@ -10,6 +10,15 @@ export default {
         getProductsByCid:  (state) => (id) => {
             return state.results.filter(product => product.cid == id)
         },
+        query: (state) => (id, keywords) => {
+            return state.results.filter(product => {
+                if(keywords.length) {
+                    return product.cid == id && product.name.indexOf(keywords) !== -1;
+                } else {
+                    return product.cid == id;
+                }
+            })
+        },
     },
     actions:{
         load({commit, state}) {

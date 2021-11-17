@@ -1,5 +1,6 @@
 <template>
   <div class="component-category-nav">
+    <a href="#">地址管理</a>
     <div
       class="item"
       :class="{on:currentCate == item.id}"
