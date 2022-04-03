@@ -1,8 +1,5 @@
 <template>
   <div class="page-home" v-loading="loading">
-    <div class="">
-      <GoodsList :products="products" :loading="loading" />
-    </div>
     <FooterBar
             :categories="categories"
             :currentCategory="currentCategory"
@@ -16,7 +13,12 @@
               v-model="keywords"
               @input="input($event)" placeholder="请输入关键字搜索" clearable></el-input>
     </div>
-    <div style="height: 60px;"></div>
+    <!--<div style="height: 60px;"></div>-->
+
+    <div class="">
+      <GoodsList :products="products" :loading="loading" />
+    </div>
+
     <ShoppingCart v-show="showCart" />
   </div>
 </template>
@@ -81,8 +83,9 @@ export default {
 <style scoped lang="less">
 .search {
   width: 400px;
-  position: fixed;
-  left: 15px;
-  bottom: 70px;
+  margin: 15px 0 0 15px;
+  /*position: fixed;*/
+  /*left: 15px;*/
+  /*top: 70px;*/
 }
 </style>

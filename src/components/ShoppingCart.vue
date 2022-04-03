@@ -99,7 +99,7 @@ export default {
   background: #fff;
   position: fixed;
   right: 0;
-  bottom: 60px;
+  top: 60px;
   border: 1px solid rgba(0,0,0,0.1);
   box-sizing: border-box;
   .list {

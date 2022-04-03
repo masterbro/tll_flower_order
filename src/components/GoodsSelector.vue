@@ -97,12 +97,17 @@ export default {
         }
         console.log(sku);
         this.sku = sku;
-        this.stock = product.sku.sku_map[[this.selectedSku.color,this.selectedSku.size].join()].stock;
+
+        let key = [this.selectedSku.color];
+        if(this.selectedSku.size) key.push(this.selectedSku.size);
+        this.stock = product.sku.sku_map[key.join()].stock;
       },
       skuChange(type, value) {
           this.selectedSku[type] = value;
           const {product} = this;
-          this.stock = product.sku.sku_map[[this.selectedSku.color,this.selectedSku.size].join()].stock;
+          let key = [this.selectedSku.color];
+          if(this.selectedSku.size) key.push(this.selectedSku.size);
+          this.stock = product.sku.sku_map[key.join()].stock;
       },
       addToCart() {
           let sku = '';

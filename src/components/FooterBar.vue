@@ -13,7 +13,7 @@
                   v-text="item.name">
           </div>
         </div>
-        <router-link to="/address" class="link">地址管理</router-link>
+        <router-link v-if="showCartBtn" to="/address" class="link">地址管理</router-link>
       </div>
       <div v-if="showCartBtn" class="btn" @click="$emit('toggleCart')">查看购物车({{count}})</div>
     </div>
@@ -48,12 +48,12 @@ export default {
   height: 60px;
 }
 .footer {
-
+  z-index: 1;
   height: 60px;
   position: fixed;
   left:0;
   right:0;
-  bottom: 0;
+  top: 0;
   background: #fff;
   display: flex;
   justify-content: space-between;

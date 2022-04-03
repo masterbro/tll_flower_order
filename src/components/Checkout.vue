@@ -11,7 +11,8 @@
         <el-select v-model="form.address" filterable placeholder="请选择配送地址" style="width: 400px">
           <el-option
                   v-for="item in addresses"
-                  :label="`${item.real_name}/${item.tel}/${item.company}`"
+                  :key="item.id"
+                  :label="`${item.real_name}/${item.tel}/${item.address}/${item.company}`"
                  :value="item.id"></el-option>
         </el-select>
         &nbsp;&nbsp;
