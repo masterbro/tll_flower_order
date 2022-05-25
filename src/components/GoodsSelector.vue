@@ -36,6 +36,7 @@
           </div>
         </div>
         <h4>库存：{{stock}}</h4>
+        <p class="price">单价：￥{{price}}</p>
         <!--<div class="clear">-->
           <!---->
         <!--</div>-->
@@ -68,6 +69,7 @@ export default {
     return {
         stock: 0,
         qty: 1,
+        price: '',
         dialogVisible: true,
         sku: {color:[],size:[],colorName:'',sizeName:''},
         selectedSku: {color:'',size:''},
@@ -82,6 +84,7 @@ export default {
         const {product} = this;
         if(!product.sku) {
             this.stock = product.stock;
+            this.price = product.price;
             return;
         }
 
@@ -101,6 +104,7 @@ export default {
         let key = [this.selectedSku.color];
         if(this.selectedSku.size) key.push(this.selectedSku.size);
         this.stock = product.sku.sku_map[key.join()].stock;
+        this.price = product.sku.sku_map[key.join()].price;
       },
       skuChange(type, value) {
           this.selectedSku[type] = value;
@@ -108,6 +112,7 @@ export default {
           let key = [this.selectedSku.color];
           if(this.selectedSku.size) key.push(this.selectedSku.size);
           this.stock = product.sku.sku_map[key.join()].stock;
+          this.price = product.sku.sku_map[key.join()].price;
       },
       addToCart() {
           let sku = '';
@@ -164,6 +169,10 @@ export default {
     padding: 5px 0;
     font-weight: normal;
     font-size: 14px;
+  }
+  .price {
+    margin: 0;
+    color: red;
   }
 
   .opt {

@@ -223,5 +223,22 @@ export default {
   }
 
   .clear {clear: both;}
+@media (max-width: 768px) {
+  .page-goods {
+      padding-top: 80px;
+  }
 
+  .goods-list {
+      .item {
+          clear: both;
+          width: 100%;
+          box-sizing: border-box;
+
+          span.name {
+              font-size: 12px;
+          }
+      }
+  }
+  
+}
 </style>

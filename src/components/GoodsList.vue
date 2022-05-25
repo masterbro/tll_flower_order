@@ -10,6 +10,7 @@
             class="item">
             <img :src="item.thumb" alt="">
             <p v-text="item.name"></p>
+            <p class="price" v-text="'￥'+ item.display_price_v2"></p>
         </div>
     </div>
 
@@ -86,5 +87,20 @@ export default {
       }
     }
   }
+
+// @media (max-width: 768px) {
+.goods-list {
+  .item {
+    height: 140px;
+    p {
+      line-height: 20px;
+      height: 20px;
+      &.price {
+        color: red;
+      }
+    }
+  }
+}
+// }
 
 </style>

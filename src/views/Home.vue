@@ -83,7 +83,9 @@ export default {
 <style scoped lang="less">
 .search {
   width: 400px;
-  margin: 15px 0 0 15px;
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: 15px 15px 0 15px;
   /*position: fixed;*/
   /*left: 15px;*/
   /*top: 70px;*/
