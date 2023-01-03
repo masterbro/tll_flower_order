@@ -2,7 +2,8 @@
   <div class="component-goods-selector">
     <el-dialog
             :title="product.name"
-            width="500px"
+            width="80%"
+            style="max-width:600px"
             :visible.sync="dialogVisible"
             @closed="closed">
       <div class="goods-selector">
