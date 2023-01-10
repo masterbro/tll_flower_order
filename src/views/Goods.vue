@@ -1,7 +1,7 @@
 <template>
   <div class="page-goods" v-loading="loading">
     <div class="p15">
-      <el-button type="primary" size="mini" @click="save()">保存</el-button>
+      <el-button type="primary" size="mini" @click="save()">批量保存</el-button>
 
 
       <div class="goods-list">
@@ -13,18 +13,24 @@
              :key="item.key">
           <img :src="item.thumb"/>
           <span class="name" v-text="item.name"></span>
-          <el-input type="text" size="mini" v-model="item.price" @input="inputChange(item.key)">
-            <template slot="prepend">价格</template>
-          </el-input>
-          <el-input type="text" size="mini" v-model="item.stock" @input="inputChange(item.key)">
-            <template slot="prepend">库存</template>
-          </el-input>
+          <div class="inputs">
+            <el-input type="text" size="mini" v-model="item.price" @input="inputChange(item.key)">
+                <template slot="prepend">价格</template>
+            </el-input>
+            <el-input type="text" size="mini" v-model="item.stock" @input="inputChange(item.key)">
+                <template slot="prepend">库存</template>
+            </el-input>
+            <el-input type="text" size="mini" v-model="item.min_pack" @input="inputChange(item.key)">
+                <template slot="prepend">最低</template>
+            </el-input>
+          </div>
+          <div><el-button type="primary" icon="el-icon-check" circle size="mini" @click="saveSingle(item.key)"></el-button></div>
         </div>
       </div>
 
       <div class="clear"></div>
       <br>
-      <el-button type="primary" size="mini" @click="save()">保存</el-button>
+      <el-button type="primary" size="mini" @click="save()">批量保存</el-button>
     </div>
 
 
@@ -100,6 +106,7 @@ export default {
                             key: `${product.id},${key}`,
                             thumb: product.thumb,
                             name: `${product.name}[${key}]`,
+                            min_pack: product.min_pack,
                             price: product.sku.sku_map[key].price,
                             stock: product.sku.sku_map[key].stock,
                         })
@@ -112,6 +119,7 @@ export default {
                         thumb: product.thumb,
                         name: product.name,
                         price: product.price,
+                        min_pack: product.min_pack,
                         stock: product.stock,
                     })
                 }
@@ -122,6 +130,36 @@ export default {
         inputChange(key) {
             if(!this.dirtyProducts.includes(key))
                 this.dirtyProducts.push(key);
+        },
+        saveSingle(key) {
+            const {showingProducts} = this;
+            const product = showingProducts.find(p => p.key == key);
+            if(!product) {
+                return false;
+            }
+            let error = false;
+            if(isNaN(product.price) || isNaN(product.stock) || isNaN(product.min_pack)) {
+                error = product.name + ' 输入有误，请修改';
+            }
+            if(error !== false) {
+                this.$toast.error(error);
+                return false;
+            }
+
+            const loading = this.$loading({lock: true});
+            this.$http.post('/manage/product/batchUpdate', [product])
+                .then((res) => {
+                    loading.close();
+                    if(res.error_code != 0) {
+                        this.$toast.error(res.tip);
+                    } else {
+                        this.$toast.success('保存成功');
+                        this.loadData(this.currentCategory);
+                    }
+                }).catch(() => {
+                    loading.close();
+                    this.$toast.error('操作失败，请重试');
+                });
         },
         save() {
             const update = this.validate();
@@ -156,7 +194,7 @@ export default {
             dirtyProducts.forEach(item => {
                 const product = showingProducts.find(p => p.key == item);
                 if(product) {
-                    if(isNaN(product.price) || isNaN(product.stock)) {
+                    if(isNaN(product.price) || isNaN(product.stock) || isNaN(product.min_pack)) {
                         error = product.name + ' 输入有误，请修改';
                     }
 
@@ -225,7 +263,7 @@ export default {
   .clear {clear: both;}
 @media (max-width: 768px) {
   .page-goods {
-      padding-top: 80px;
+      padding-top: 100px;
   }
 
   .goods-list {
@@ -236,6 +274,16 @@ export default {
 
           span.name {
               font-size: 12px;
+          }
+          .inputs {
+            width: 90px;
+
+            .el-input {
+                margin-bottom: 5px;
+            }
+            .el-button {
+                margin-left: 5px;
+            }
           }
       }
   }
