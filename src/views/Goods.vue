@@ -1,6 +1,12 @@
 <template>
   <div class="page-goods" v-loading="loading">
     <div class="p15">
+        <div class="search">
+            <el-input
+                    prefix-icon="el-icon-search"
+                    v-model="keywords"
+                    @input="input($event)" placeholder="请输入关键字搜索" clearable></el-input>
+     </div>
       <el-button type="primary" size="mini" @click="save()">批量保存</el-button>
 
 
@@ -11,7 +17,7 @@
              :class="{'dirty':dirtyProducts.includes(item.key)}"
              v-for="item in showingProducts"
              :key="item.key">
-          <img :src="item.thumb"/>
+          <!-- <img :src="item.thumb"/> -->
           <span class="name" v-text="item.name"></span>
           <div class="inputs">
             <el-input type="text" size="mini" v-model="item.price" @input="inputChange(item.key)">
@@ -47,6 +53,8 @@
 // @ is an alias to /src
 import FooterBar from '../components/FooterBar.vue'
 import {Button,Icon,Form,FormItem,Input,Select,Option,Radio, Alert} from 'element-ui';
+
+let inputTimeout = null;
 export default {
     name: 'goods',
     components: {
@@ -63,12 +71,22 @@ export default {
             showingProducts: [],
             products: [],
             dirtyProducts: [],
+            keywords: '',
         }
     },
     created() {
       this.loadData();
     },
     methods: {
+        input(value) {
+            if(inputTimeout)
+                clearTimeout(inputTimeout);
+
+            inputTimeout = setTimeout(() => {
+                //this.products = this.$store.getters['products/query'](this.currentCategory, this.keywords);
+                this.refreshShowingProducts();
+            }, 300);
+        },
         loadData(cid = false) {
             this.loading = true;
             this.$http.get('/manage/home/getBridge',{params: {
@@ -95,7 +113,19 @@ export default {
         },
         switchCategory(cid) {
             this.currentCategory = cid;
-            const products = this.products.filter((item) => item.cid == cid);
+            this.keywords = '';
+            this.refreshShowingProducts();
+        },
+        refreshShowingProducts() {
+            const cid = this.currentCategory;
+            const keywords = this.keywords;
+            let products = [];
+            if(keywords) {
+                products = this.products.filter((item) => item.cid == cid && item.name.indexOf(keywords) !== -1);
+            } else {
+                products = this.products.filter((item) => item.cid == cid);
+            }
+
             const showingProducts = [];
             products.forEach(product => {
                 if(product.sku) {
@@ -224,15 +254,20 @@ export default {
   }
 </style>
 <style scoped lang="less">
-  .el-input {
-    width: 80px;
-    text-align: center;
-    margin-left: 5px;
-  }
+.search {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
 
   .goods-list {
     margin-top: 20px;
     font-size: 14px;
+    .el-input {
+    width: 80px;
+    text-align: center;
+    margin-left: 5px;
+  }
     .item {
       float: left;
       margin-right: 10px;
@@ -276,10 +311,13 @@ export default {
               font-size: 12px;
           }
           .inputs {
-            width: 90px;
+            // width: 90px;
+            flex: 1;
+            display: flex;
 
             .el-input {
-                margin-bottom: 5px;
+                margin-right: 5px;
+                // display: inline-block;
             }
             .el-button {
                 margin-left: 5px;
