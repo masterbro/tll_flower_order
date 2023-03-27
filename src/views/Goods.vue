@@ -19,7 +19,8 @@
              :key="item.key">
           <!-- <img :src="item.thumb"/> -->
           <span class="name" v-text="item.name"></span>
-          <div class="inputs">
+          <div class="price-form">
+            <div class="inputs">
             <el-input type="text" size="mini" v-model="item.price" @input="inputChange(item.key)">
                 <template slot="prepend">价格</template>
             </el-input>
@@ -31,6 +32,8 @@
             </el-input>
           </div>
           <div><el-button type="primary" icon="el-icon-check" circle size="mini" @click="saveSingle(item.key)"></el-button></div>
+          </div>
+          <span class="time">上次调价时间: {{ item.price_updated_at || '---' }}</span>
         </div>
       </div>
 
@@ -137,6 +140,7 @@ export default {
                             thumb: product.thumb,
                             name: `${product.name}[${key}]`,
                             min_pack: product.min_pack,
+                            price_updated_at: product.price_updated_at,
                             price: product.sku.sku_map[key].price,
                             stock: product.sku.sku_map[key].stock,
                         })
@@ -149,6 +153,7 @@ export default {
                         thumb: product.thumb,
                         name: product.name,
                         price: product.price,
+                        price_updated_at: product.price_updated_at,
                         min_pack: product.min_pack,
                         stock: product.stock,
                     })
@@ -263,11 +268,13 @@ export default {
   .goods-list {
     margin-top: 20px;
     font-size: 14px;
+    
     .el-input {
-    width: 80px;
-    text-align: center;
-    margin-left: 5px;
-  }
+        width: 80px;
+        text-align: center;
+        margin-left: 5px;
+    }
+  
     .item {
       float: left;
       margin-right: 10px;
@@ -278,18 +285,32 @@ export default {
       background: #fff;
       padding: 10px;
       border-radius: 5px;
+      flex-direction: column;
+      align-items: start;
       &.dirty {
         background: #d9ecff;
       }
-
+      .price-form {
+        display: flex;
+    }
       img {
         margin-right: 10px;
         width: 40px;
         height: 40px;
       }
       span.name {
-        flex: 1;
+        // flex: 1;
+        padding-left: 5px;
+        padding-bottom: 5px;
         font-size: 14px;
+      }
+
+      span.time {
+        // flex: 1;
+        padding-left: 5px;
+        padding-top: 5px;
+        font-size: 12px;
+        color: #b9b8b8;
       }
     }
 
@@ -308,7 +329,7 @@ export default {
           box-sizing: border-box;
 
           span.name {
-              font-size: 12px;
+            //   font-size: 12px;
           }
           .inputs {
             // width: 90px;
