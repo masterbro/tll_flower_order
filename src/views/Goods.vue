@@ -1,6 +1,6 @@
 <template>
   <div class="page-goods" v-loading="loading">
-    <div class="p15">
+    <div style="padding:10px 0 0 85px;">
         <div class="search">
             <el-input
                     prefix-icon="el-icon-search"
@@ -92,7 +92,7 @@ export default {
         },
         loadData(cid = false) {
             this.loading = true;
-            this.$http.get('/manage/home/getBridge',{params: {
+            this.$http.get('/api/product',{params: {
                 _uri: 'product',
             }})
             .then((res) => {
@@ -101,7 +101,10 @@ export default {
                     this.$toast.error(res.tip);
                 } else {
                     this.products = res.data.products;
-                    this.categories = res.data.categories;
+                    this.categories = [
+                        // {id:0, name: '全部产品'},
+                        ...res.data.categories,
+                    ];
                     if(cid) {
                         this.switchCategory(cid);
                     } else {
@@ -123,8 +126,11 @@ export default {
             const cid = this.currentCategory;
             const keywords = this.keywords;
             let products = [];
+            // if(cid == 0) {
+                
+            // }
             if(keywords) {
-                products = this.products.filter((item) => item.cid == cid && item.name.indexOf(keywords) !== -1);
+                products = this.products.filter((item) => item.name.indexOf(keywords) !== -1);
             } else {
                 products = this.products.filter((item) => item.cid == cid);
             }
@@ -277,13 +283,13 @@ export default {
   
     .item {
       float: left;
-      margin-right: 10px;
-      margin-bottom: 10px;
+    //   margin-right: 10px;
+      margin-bottom: 5px;
       width: 380px;
       display: flex;
       align-items: center;
       background: #fff;
-      padding: 10px;
+      padding: 5px;
       border-radius: 5px;
       flex-direction: column;
       align-items: start;
@@ -319,7 +325,7 @@ export default {
   .clear {clear: both;}
 @media (max-width: 768px) {
   .page-goods {
-      padding-top: 100px;
+    //   padding-top: 100px;
   }
 
   .goods-list {
