@@ -9,7 +9,7 @@
             <p>金额合计：<span>{{item.total}}元</span></p>
             <div class="op">
                 <!-- <span>打印</span> -->
-                <!-- <span @click="checkout(item, index)" v-if="item.checkout != 1">结算</span> -->
+                <span @click="checkout(item, index)" v-if="item.checkout != 1">确认发货</span>
                 <span @click="$router.push({name: 'inventory-order-edit', params: {id:item.id}})" v-if="item.checkout != 1">编辑</span>
                 <span @click="$router.push({name: 'inventory-order-show', params: {id:item.id}})">查看详情</span>
             </div>
@@ -58,7 +58,7 @@ export default {
             this.loadData();
         },
         checkout(item, index) {
-            if(!confirm('确定要结算当前订单吗？结算后订单内商品将会自动添加到当日采购单内')) {
+            if(!confirm('确定要确认发货吗？确认后订单将不能修改')) {
                 return;
             }
 

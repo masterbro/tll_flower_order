@@ -6,12 +6,12 @@
             <template v-if="item.type == 'plan'">
                 <h3>{{item.day}} 初始订单</h3>
                 <p>下单时间：<span>{{item.day}}</span></p>
+                <p>客户：<span>{{item.client_name}}</span></p>
                 <p>产品数量：<span>{{item.total_qty}}</span></p>
                 <div class="op">
                     <!-- <span>打印</span> -->
-                    <span v-if="item.status == 0" @click="$router.push({name: 'inventory-order-purchase-edit', params: {id:item.id}})">编辑</span>
-                    <span v-if="item.status == 0" @click="checkout(item, index)">生成正式采购单</span>
-                    <span @click="$router.push({name: 'inventory-order-purchase-show', params: {id:1}})">查看详情</span>
+                    <span v-if="item.status == 0" @click="$router.push({name: 'inventory-order-plan-edit', params: {id:item.id}})">编辑</span>
+                    <span @click="$router.push({name: 'inventory-order-purchase-show', params: {id:item.id}})">查看详情</span>
                 </div>
             </template>
             <template v-else>

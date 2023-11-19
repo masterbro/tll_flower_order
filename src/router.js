@@ -68,6 +68,11 @@ export default new Router({
           component: () => import(/* webpackChunkName: "inventory" */ './views/inventory/Purchase.vue')
         },
         {
+          path: 'purchase-plan',
+          name: 'inventory-purchase-plan',
+          component: () => import(/* webpackChunkName: "inventory" */ './views/inventory/PurchasePlan.vue')
+        },
+        {
           path: 'sell',
           name: 'inventory-sell',
           component: () => import(/* webpackChunkName: "inventory" */ './views/inventory/Sell.vue')
@@ -77,6 +82,7 @@ export default new Router({
           name: 'inventory-order-purchase',
           component: () => import(/* webpackChunkName: "inventory" */ './views/inventory/OrderPurchase.vue')
         },
+        
         {
           path: 'order-purchase/:id',
           name: 'inventory-order-purchase-show',
@@ -87,6 +93,18 @@ export default new Router({
           path: 'order-purchase/:id/edit',
           name: 'inventory-order-purchase-edit',
           component: () => import(/* webpackChunkName: "inventory" */ './views/inventory/Purchase.vue'),
+          props: true,
+        },
+        {
+          path: 'order-plan/:id/edit',
+          name: 'inventory-order-plan-edit',
+          component: () => import(/* webpackChunkName: "inventory" */ './views/inventory/PurchasePlan.vue'),
+          props: true,
+        },
+        {
+          path: 'order-plan-today',
+          name: 'inventory-plan-today',
+          component: () => import(/* webpackChunkName: "inventory" */ './views/inventory/OrderPlanShow.vue'),
           props: true,
         },
       ],

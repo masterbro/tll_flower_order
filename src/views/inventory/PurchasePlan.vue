@@ -1,17 +1,25 @@
 <template>
     <div class="page-purchase">
       <template v-if="id > 0">
-        <h4 class="page-title">{{ day }} {{ type == 'plan' ? '初始采购单' : '采购单' }}</h4>
+        <h4 class="page-title">{{ day }} 初始订单</h4>
+        <div class="content" style="margin-bottom: 10px;">
+          <el-form ref="form" label-position="left" label-width="70px">
+              <el-form-item label="客户" style="margin-bottom: 0;">
+                  <span>{{ clientName }}</span>
+              </el-form-item>
+          </el-form>
+      </div>
       </template>
       <template v-else>
-        <h4 class="page-title">创建正式采购单</h4>
+        <h4 class="page-title">创建初始订单</h4>
+          <ClientPicker @selected="(client) => currentClient = client" />
         
       </template>
         <div class="sell-list">
           <div class="item header">
             <div class="text">商品列表</div>
             <div style="width: 60px;">规格</div>
-            <div style="width: 60px;margin-left: 10px;">{{type == 'order' ? '采购' : '参考'}}单价</div>
+            <div style="width: 60px;margin-left: 10px;">参考单价</div>
             <div style="width: 40px;margin-left: 10px;">数量</div>
             <div style="width: 30px;"></div>
           </div>
@@ -81,6 +89,10 @@ export default {
     id: {
       required: false,
       default: null,
+    },
+    type: {
+      required: false,
+      default: 'plan',
     }
   },
     data() {
@@ -91,14 +103,11 @@ export default {
         loading: false,
         cart: [],
         currentClient: {},
-        type: 'order',
       }
     },
     created() {
       if(this.id) {
         this.loadData(this.id);
-      } else {
-        this.loadPlan();
       }
     },
     methods: {
@@ -126,18 +135,9 @@ export default {
             console.log(res.data);
             this.day = res.data.day;
             this.type = res.data.type;
+            this.clientName = res.data.client_name;
             this.cart = [...res.data.content];
             i = res.data.content.pop().id;
-        });
-      },
-      loadPlan(id) {
-        this.$http.get('/manage/home/getBridge',{params: {
-                    _uri: 'inventory/planToday',
-                    _auth: 1,
-                }})
-        .then((res) => {
-            this.cart = [...res.data.content];
-            i = res.data.content.count + 1;
         });
       },
 
@@ -149,6 +149,11 @@ export default {
           return;
         }
 
+        if(this.id <= 0 && !this.currentClient.id) {
+          this.$toast.error('请选择客户');
+          return;
+        }
+
         let error = '';
         let keys = [];
         this.cart.forEach(c => {
@@ -156,12 +161,12 @@ export default {
             error = '商品名称不能为空';
             return true;
           }
-          if(this.type == 'order') {
-            if(!c.price || isNaN(c.price) || c.price < 0) {
-              error = c.name + '价格错误';
-              return true;
-            }
-          }
+          // if(this.type == 'order') {
+          //   if(!c.price || isNaN(c.price) || c.price < 0) {
+          //     error = c.name + '价格错误';
+          //     return true;
+          //   }
+          // }
           
           if(!c.qty || isNaN(c.qty) || c.qty < 0) {
             error = c.name + '数量错误';
@@ -204,7 +209,8 @@ export default {
                     _uri: 'inventory/purchase',
                     _auth: 1,
                     content: JSON.stringify(cart),
-                    type: 'order',
+                    client: JSON.stringify(this.currentClient),
+                    type: 'plan',
                     _form_data: 1,
                 };
         if(this.id)
@@ -249,7 +255,7 @@ export default {
     <style lang="less" scoped>
     .content {
         background-color: #fff;
-        padding: 20px 10px 1px;
+        padding: 5px 10px 1px;
     }
     
     .btn {

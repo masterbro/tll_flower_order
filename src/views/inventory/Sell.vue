@@ -18,9 +18,10 @@
         <div class="sell-list">
           <div class="item header">
             <div class="text">商品列表</div>
-            <!-- <div class="price">单价</div> -->
-            <!-- <div class="qty">数量</div> -->
-            <!-- <div class="icon"></div> -->
+            <div style="width: 60px;">规格</div>
+            <div style="width: 60px;margin-left: 10px;">采购单价</div>
+            <div style="width: 40px;margin-left: 10px;">数量</div>
+            <div style="width: 30px;"></div>
           </div>
           <div class="item"
             v-for="(item, index) in cart"
@@ -184,7 +185,9 @@ export default {
       },
       choose(item) {
         this.drawer = false;
-        
+        if(this.currentClient.id != item.id) {
+          this.loadPlan(item.id);
+        }
         this.form.client = item.name;
         this.currentClient = item;
       },
@@ -228,6 +231,17 @@ export default {
                 }})
         .then((res) => {
             this.clients = res.data;
+        });
+      },
+      loadPlan(id) {
+        this.$http.get('/manage/home/getBridge',{params: {
+                    _uri: 'inventory/planClient',
+                    _auth: 1,
+                    client_id: id
+                }})
+        .then((res) => {
+            this.cart = [...res.data];
+            i = i + res.data.count + 1;
         });
       },
 
